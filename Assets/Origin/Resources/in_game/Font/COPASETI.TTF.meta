@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: e5c067512973cf84b8c2f4b82acf7468
+timeCreated: 1481335330
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Copasetic
+  fontNames:
+  - Copasetic
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
