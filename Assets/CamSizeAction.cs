@@ -24,7 +24,7 @@ using GoodNightMypi.TimeAction;
             while (t < 1f)
             {
                 t += Time.deltaTime/time;
-            cam.orthographicSize = Mathf.Lerp(s, targetSize,curve.Evaluate(t));
+                cam.orthographicSize = Mathf.Lerp(s, targetSize,curve.Evaluate(t));
                 back.localScale = Vector3.one * cam.orthographicSize / 5f;
                 yield return null;
             }

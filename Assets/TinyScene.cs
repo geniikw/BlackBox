@@ -14,11 +14,23 @@ public class TinyScene : MonoBehaviour {
             return ;
          enableAnimation.PlayTimeAction();
     }
+    public Coroutine EnableSceneInCode()
+    {
+        if (enableAnimation == null)
+            return null;
+        return enableAnimation.PlayTimeAction();
+    }
 
     public void DisableScene()
     {
         if (disableAnimation == null)
             return ;
          disableAnimation.PlayTimeAction();
+    }
+    public Coroutine DisableSceneInCode()
+    {
+        if (disableAnimation == null)
+            return null;
+        return disableAnimation.PlayTimeAction();
     }
 }

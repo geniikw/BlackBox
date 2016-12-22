@@ -50,6 +50,11 @@ public class SmallSceneManager : MonoBehaviour {
         SwitchScene(firstScene);
     }
     
+    public void SwitchSceneInInspector(SmallScene next)
+    {
+        StartCoroutine(SwitchSequence(next));
+    }
+
     public static void SwitchScene(SmallScene next)
     {
         instance.StartCoroutine(instance.SwitchSequence(next));

@@ -7,8 +7,6 @@ public class CameraSizeTool : MonoBehaviour {
     public float adjust = 5f;
     Camera m_cam;
     public AnimationCurve curve = AnimationCurve.EaseInOut(0,0,1,1);
-
-
     
     private void Start()
     {
@@ -41,9 +39,8 @@ public class CameraSizeTool : MonoBehaviour {
 
         while (t < 1f) {
             t += Time.deltaTime/time;
-
             size = Mathf.Lerp(start, end, curve.Evaluate(t));
-
+            backGround.localScale = Vector3.one * size / 5f;
             yield return null;
         }
 

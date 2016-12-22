@@ -12,22 +12,25 @@ public class CardBox : MonoBehaviour {
 
     public float cardAddTime = 0.2f;
     public float cardAdjustTime = 0.2f;
+    public float cardDeleteAllTime = 0.2f;
 
     public AnimationCurve curve = AnimationCurve.EaseInOut(0, 0, 1, 1);
     
     public int cardBoxLimit = 15;//other까지 활용한 최대 갯수
+
+    public int cardCount { get { return m_cardBox.Count; } }
+    public card firstCard { get { return m_cardBox[0]; } }
     List<card> m_cardBox = new List<card>();//실직적인 데이터
-    List<Card> m_cardPool = new List<Card>();//pool
+    List<Card> m_cardViewPool = new List<Card>();//pool
     List<Transform> m_viewList = new List<Transform>();//보여지고있는 cardlist
+    int m_viewFirstIndex = 0;
 
     public void Clear()
     {
         m_cardBox.Clear();
-
         m_viewList.ForEach(t => t.gameObject.SetActive(false));
     }
 
-    int m_viewFirstIndex = 0;
     
     Vector3 nextCardSlotLocalPosition
     {
@@ -49,7 +52,7 @@ public class CardBox : MonoBehaviour {
         {
             var card = deck.GetChild(n).GetComponent<Card>();
             if (card != null)
-                m_cardPool.Add(card);
+                m_cardViewPool.Add(card);
         }
     }
     
@@ -57,7 +60,7 @@ public class CardBox : MonoBehaviour {
     {
         SmallSceneManager.instance.input = false;
 
-        if (m_viewList.Count == m_cardPool.Count)
+        if (m_viewList.Count == m_cardViewPool.Count)
         {
             yield return StartCoroutine(FullToOther());
         }
@@ -89,26 +92,46 @@ public class CardBox : MonoBehaviour {
 
         SmallSceneManager.instance.input = true;
     }
-    IEnumerator DeleteSeq(int viewIdx)
+    IEnumerator DeleteSeq(int index)
     {
         SmallSceneManager.instance.input = false;
-        var moveList = m_viewList.Where(t => m_viewList.IndexOf(t) > viewIdx);
+        m_cardBox.RemoveAt(index);
+        var moveList = m_viewList.Where(t => m_viewList.IndexOf(t) > index);
 
-        var idx = viewIdx-1;
+        var i = index - 1;
         foreach (var trans in moveList)
         {
-            StartCoroutine(TweenTransform.Position(trans, GetCardSlotPostiion(idx++), cardAdjustTime, curve));
+            StartCoroutine(TweenTransform.Position(trans, GetCardSlotPostiion(i++), cardAdjustTime, curve));
         }
-        m_viewList[viewIdx].gameObject.SetActive(false);
-        m_viewList.RemoveAt(viewIdx);
+        yield return new WaitForSeconds(cardAdjustTime);
 
-        yield return null;
-
-
+        m_viewList[index].gameObject.SetActive(false);
+        m_viewList.RemoveAt(index);
+        
         if (m_cardBox.Count == 0) { playButton.interactable = false; }
         SmallSceneManager.instance.input = true;
     }
-    
+
+    public IEnumerator DeleteAllCard()
+    {
+        while(m_cardBox.Count > 0)
+        {
+            m_viewList[0].GetComponent<Image>().CrossFadeAlpha(0f, cardDeleteAllTime, true);
+            yield return StartCoroutine(DeleteSingleCardInCode(0));
+        }
+    }
+    public IEnumerator DeleteSingleCardInCode(int index)
+    {
+        yield return StartCoroutine(TweenTransform.Position(m_viewList[index], m_viewList[index].position + Vector3.up * 15f, cardDeleteAllTime, curve));
+        yield return DeleteSeq(index);
+    }
+
+    public void DeleteAllCardInInspector()
+    {
+        StartCoroutine(DeleteAllCard());
+    }
+
+
     public Coroutine AddCard()
     {
         if(m_cardBox.Count >= cardBoxLimit)
@@ -132,15 +155,20 @@ public class CardBox : MonoBehaviour {
     public Coroutine Delete(Transform toDel)
     {
         var index = (m_viewList.IndexOf(toDel) + m_viewFirstIndex);
-        m_cardBox.RemoveAt(index);
         return StartCoroutine(DeleteSeq(index));
     }
+
+    public Coroutine Delete(int index)
+    {
+        return StartCoroutine(DeleteSeq(index));
+    }
+
+  
     public Card GetCardFromPool()
     {
-        var card = m_cardPool.First(c => !c.gameObject.activeInHierarchy);
+        var card = m_cardViewPool.First(c => !c.gameObject.activeInHierarchy);
         card.gameObject.SetActive(true);
         card.InitGraphic();
         return card;
     }
-
 }

@@ -115,6 +115,16 @@ public class MapManager : MonoBehaviour {
     {
         return GetPosition(currentRoute[0]) + new Vector3(0f,-1f,0f);
     }
+    public Vector3 GetRoutePosition(int idx)
+    {
+        return GetPosition(currentRoute[idx]);
+    }
+    public Vector3 GetCamPosition(int idx)
+    {
+        var pos = GetRoutePosition(idx);
+        pos += Vector3.back * (pos.z+2f);
+        return pos;
+    }
 
     public void Receive(GameObject go)
     {
@@ -123,7 +133,6 @@ public class MapManager : MonoBehaviour {
 }
 
 #if UNITY_EDITOR
-
 [CustomEditor(typeof(MapManager))]
 public class MapManagerEditor : Editor
 {

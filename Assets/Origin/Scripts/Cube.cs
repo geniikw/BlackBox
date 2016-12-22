@@ -14,26 +14,19 @@ public class Cube : MonoBehaviour, IDragHandler ,IPointerUpHandler, IPointerDown
     static bool isInput = false;
     static Cube current;
     static List<Cube> selectList;
-    static List<Cube> otherList;
 
     static bool isPlus;
     static bool isX;
     static bool isInverse;
-    static float submitDistanceRatio = 0.005f;
+    static float submitDistanceRatio = 0.007f;
     float submitDistance { get { return 400f * submitDistanceRatio; } }
     float dragDistance = 0f;
-
-    static Material color;
 
     public void Init(Vector3 coord)
     {
         this.coord = coord;
     }
-
-    public void Release()
-    {
-    }
-
+    
     public Vector3 GetInitPosition
     {
         get
@@ -52,16 +45,16 @@ public class Cube : MonoBehaviour, IDragHandler ,IPointerUpHandler, IPointerDown
             move.y = 0;
             var ww = Camera.main.ScreenToWorldPoint(Vector3.zero) - Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, 0, 0));
             //뭔가 병신같이 복잡하다. 똑똑한사람은 심플하게 솔루션이 있겠지... 흑흑
-
-            move.x /= Screen.width / Mathf.Abs(ww.x);
-            //if (isPlus && !isInverse && move.x > 0)
-            //    move.x = 0;
-            //else if (isPlus && isInverse && move.x < 0)
-            //    move.x = 0;
-            //else if (!isPlus && !isInverse && move.x < 0)
-            //    move.x = 0;
-            //else if (!isPlus && isInverse && move.x > 0)
-            //    move.x = 0;
+            
+            move.x /= Screen.width / Mathf.Abs(ww.magnitude);
+            if (isPlus && !isInverse && move.x > 0)
+                move.x = 0;
+            else if (isPlus && isInverse && move.x < 0)
+                move.x = 0;
+            else if (!isPlus && !isInverse && move.x < 0)
+                move.x = 0;
+            else if (!isPlus && isInverse && move.x > 0)
+                move.x = 0;
 
             if (isX)
                 results = isInverse? move:-move;
@@ -81,7 +74,6 @@ public class Cube : MonoBehaviour, IDragHandler ,IPointerUpHandler, IPointerDown
         {
             isInput = false;
             current = null;
-            MapManager.instance.transform.Find("Handler").localPosition = Vector3.zero;
 
             selectList.ForEach(c => {
                 c.GetComponent<MeshRenderer>().material = GameResources.GetRandomMaterial();
@@ -92,13 +84,11 @@ public class Cube : MonoBehaviour, IDragHandler ,IPointerUpHandler, IPointerDown
             if (dragDistance > submitDistance)
             {
                 Debug.Log("Divide Submit");
-                var view = SmallSceneManager.instance.current.transform.Find("ViewMode");
-                view.gameObject.SetActive(true);
-                view.SendMessage("EnableScene");
+                TinySceneManager.instance.SetScene("CutView");
             }
             else
             {
-
+                MapManager.instance.transform.Find("Handler").localPosition = Vector3.zero;
                 selectList.ForEach(c => {
                     c.transform.SetParent(MapManager.instance.transform.Find("Cubes"));
                 });
@@ -113,6 +103,12 @@ public class Cube : MonoBehaviour, IDragHandler ,IPointerUpHandler, IPointerDown
     {
         if (isInput)
             return;
+
+        if (MapManager.instance.GetPosition(coord) != transform.position)
+        {
+            return;
+        }
+
         isInput = true;
         current = this;
         var middle =( MapManager.instance.currentSize - Vector3.one)/2f;

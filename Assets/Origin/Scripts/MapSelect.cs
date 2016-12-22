@@ -55,21 +55,33 @@ public class MapSelect : MonoBehaviour {
         MapManager.instance.stage = stage;
         enterButtonText.text = (stage+1).ToString();
 
-        if (stage + 2 > GameResources.GetMapDataCount())
-            next.interactable = false;
-        else
-            next.interactable = true;
-        if (stage <= 0)
-            back.interactable = false;
-        else
-            back.interactable = true;
+        ButtonInit(stage);
 
         yield return enable.PlayTimeAction();
 
         GetComponent<Animator>().enabled = true;
         SmallSceneManager.instance.input = true;
     }
-    
+
+    private void OnEnable()
+    {
+        ButtonInit(0);
+    }
+
+    private void ButtonInit(int stage)
+    {
+        if (stage + 2 > GameResources.GetMapDataCount() || stage > PlayerData.instance.m_playerData.clearStage)
+            next.interactable = false;
+        else
+            next.interactable = true;
+
+
+        if (stage <= 0)
+            back.interactable = false;
+        else
+            back.interactable = true;
+    }
+
     public void StageUp()
     {
         StartCoroutine(StageSwitchAnimation(MapManager.instance.stage + 1));
