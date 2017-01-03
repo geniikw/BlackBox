@@ -8,6 +8,10 @@ using UnityEngine.EventSystems;
 using UnityEditor;
 #endif 
 
+/// <summary>
+/// 게임매니저스러워짐... 귀찮다.
+/// </summary>
+
 public class SmallSceneManager : MonoBehaviour {
     
     public static SmallSceneManager instance { 
@@ -67,6 +71,10 @@ public class SmallSceneManager : MonoBehaviour {
     IEnumerator SwitchSequence(SmallScene next)
     {
         input = false;
+        if (current == null)
+            Debug.Log("Scene Start. next.name : " + next.name);
+        else
+            Debug.Log("SceneSwitch  prv : " + current.name + " next : " + next.name);
         if(current != null)
         {
             yield return current.DisableSequence();

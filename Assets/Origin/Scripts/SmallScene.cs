@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using GoodNightMypi.TimeAction;
+using UnityEngine.Events;
 
 public class SmallScene : MonoBehaviour
 {
@@ -11,7 +12,18 @@ public class SmallScene : MonoBehaviour
 
     public TimeBehaviour enableAnimation;
     public TimeBehaviour disableAnimation;
+    [Header("back버튼을 눌렀을 때 갈 씬.")]
+    public SmallScene prevScene;
 
+    public UnityEvent OnBackButton;
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            OnBackButton.Invoke();
+        }
+    }
 
     /// <summary>
     /// SendMessageReceiver
@@ -19,6 +31,11 @@ public class SmallScene : MonoBehaviour
     public void EndScene(SmallScene scene)
     {
         SmallSceneManager.SwitchScene(scene);
+    }
+
+    public void EndSceneByidx(int sceneidx)
+    {
+        SmallSceneManager.SwitchScene(sceneidx);
     }
 
     public void SetActiveScene(bool active)

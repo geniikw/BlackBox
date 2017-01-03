@@ -10,23 +10,22 @@ using UnityEngine.UI;
 public class UIPolygon : MaskableGraphic, IMeshModifier
 {
     public List<PolygonVertexInfo> vertexInfoList = new List<PolygonVertexInfo>();
-    [Range(0f, 360f)]
+    [Range(0f,360f)]
     public float offset = 0f;
 
     public bool innerPolygon = false;
-    [Header("innerPolygon 옵션에서 제로점과 가까울시 width의 예외처리가 되어있지 않음. ")]
-    [Range(0f, 1f)]
+    [Header("innerPolygon 옵션에서 제로점과 가까울시 width의 예외처리가 되어있지 않음. ")][Range(0f,1f)]
     public float width = 1f;
     public bool vertexColorFlag = false;
-
+    
     [System.Serializable]
     public class PolygonVertexInfo
     {
         public Color color = Color.white;
-        [Range(0f, 1f)]
+        [Range(0f,1f)]
         public float length = 1f;
     }
-
+    
     public void ModifyMesh(VertexHelper vh)
     {
         EditMesh(vh);
@@ -49,7 +48,7 @@ public class UIPolygon : MaskableGraphic, IMeshModifier
 
         for (int n = 0; n < vertexInfoList.Count; n++)
         {
-            vh.AddVert(getRadiusPosition(vertexInfoList[n], n), checkVertexColor(vertexInfoList[n].color), Vector2.zero);
+            vh.AddVert(getRadiusPosition(vertexInfoList[n], n), checkVertexColor(vertexInfoList[n].color) ,Vector2.zero);
         }
 
         if (!innerPolygon)
@@ -72,18 +71,18 @@ public class UIPolygon : MaskableGraphic, IMeshModifier
             }
         }
     }
-    Vector3 getRadiusPosition(PolygonVertexInfo info, int index, float scale = 1f)
+    Vector3 getRadiusPosition(PolygonVertexInfo info, int index, float scale=1f) 
     {
         if (vertexInfoList.Count < 3)
             return Vector3.zero;
 
-        float width = rectTransform.rect.width / 2 * info.length;
-        float height = rectTransform.rect.height / 2 * info.length;
-
+        float width = rectTransform.rect.width / 2 * info.length ;
+        float height = rectTransform.rect.height / 2 * info.length ;
+        
         float angleUnit = 2f * Mathf.PI / vertexInfoList.Count;
         float offsetToAngle = offset / 360 * Mathf.PI * 2;
 
-        Vector3 result = new Vector3(width * Mathf.Cos(angleUnit * index + offsetToAngle), height * Mathf.Sin(angleUnit * index + offsetToAngle));
+        Vector3 result = new Vector3(width * Mathf.Cos(angleUnit * index + offsetToAngle),  height* Mathf.Sin(angleUnit* index + offsetToAngle));
         return result * scale;
     }
 
@@ -98,6 +97,4 @@ public class UIPolygon : MaskableGraphic, IMeshModifier
             return color;
         }
     }
-
 }
-

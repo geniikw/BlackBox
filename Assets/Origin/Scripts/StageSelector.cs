@@ -82,8 +82,8 @@ public class StageSelector :  MonoBehaviour{
         ButtonImage.gameObject.SetActive(true);
 
         yield return StartCoroutine(MoveMask(new Vector2(50,50), Vector2.zero, maskMoveTime));
-        StartCoroutine(TweenTransform.Position(backButton, backButtonHidePosition, buttonMoveTime));
-        yield return StartCoroutine(TweenTransform.Position(nextButton, nextButtonHidePosition, buttonMoveTime));
+        StartCoroutine(TweenTrans.Position(backButton, backButtonHidePosition, buttonMoveTime));
+        yield return StartCoroutine(TweenTrans.Position(nextButton, nextButtonHidePosition, buttonMoveTime));
         currentStage = stageIndex;
     }
 
@@ -106,8 +106,8 @@ public class StageSelector :  MonoBehaviour{
     {
         yield return StartCoroutine(MoveMask(Vector2.zero, new Vector2(50, 50), maskMoveTime));
         ButtonImage.gameObject.SetActive(false);
-        StartCoroutine(TweenTransform.Position(backButton, backActivePosition.position, buttonMoveTime));
-        yield return StartCoroutine(TweenTransform.Position(nextButton, nextActivePosition.position,  buttonMoveTime));
+        StartCoroutine(TweenTrans.Position(backButton, backActivePosition.position, buttonMoveTime));
+        yield return StartCoroutine(TweenTrans.Position(nextButton, nextActivePosition.position,  buttonMoveTime));
     }
 
     IEnumerator SwitchStage(int stage)

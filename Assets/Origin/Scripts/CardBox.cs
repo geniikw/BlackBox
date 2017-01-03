@@ -70,7 +70,7 @@ public class CardBox : MonoBehaviour {
         c.InitGraphic();
         c.transform.position = cardSelector.transform.position;
        
-        yield return StartCoroutine(TweenTransform.Position(c.transform, nextCardSlotLocalPosition, cardAdjustTime,curve)); ;
+        yield return StartCoroutine(TweenTrans.Position(c.transform, nextCardSlotLocalPosition, cardAdjustTime,curve)); ;
         m_viewList.Add(c.transform);
 
         if (m_cardBox.Count >= 1) { playButton.interactable = true; }
@@ -101,7 +101,7 @@ public class CardBox : MonoBehaviour {
         var i = index - 1;
         foreach (var trans in moveList)
         {
-            StartCoroutine(TweenTransform.Position(trans, GetCardSlotPostiion(i++), cardAdjustTime, curve));
+            StartCoroutine(TweenTrans.Position(trans, GetCardSlotPostiion(i++), cardAdjustTime, curve));
         }
         yield return new WaitForSeconds(cardAdjustTime);
 
@@ -122,7 +122,7 @@ public class CardBox : MonoBehaviour {
     }
     public IEnumerator DeleteSingleCardInCode(int index)
     {
-        yield return StartCoroutine(TweenTransform.Position(m_viewList[index], m_viewList[index].position + Vector3.up * 15f, cardDeleteAllTime, curve));
+        yield return StartCoroutine(TweenTrans.Position(m_viewList[index], m_viewList[index].position + Vector3.up * 15f, cardDeleteAllTime, curve));
         yield return DeleteSeq(index);
     }
 

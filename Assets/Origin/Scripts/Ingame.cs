@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using GoodNightMypi.TimeAction;
 
 public class Ingame : MonoBehaviour {
+
+    public TimeBehaviour mapDestroy;
+    public TimeBehaviour mapCreate;
 
     public CardBox cardBox;
     public Text cutView;
@@ -12,6 +16,7 @@ public class Ingame : MonoBehaviour {
 
     int m_cutRemain = 0;
 
+    public AnimationCurve curve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
     private void OnEnable()
     {
@@ -54,10 +59,11 @@ public class Ingame : MonoBehaviour {
         Camera.main.GetComponent<CameraCircleMove>().enabled = false;
         Camera.main.GetComponent<CameraSizeTool>().SetCamSize(3f, 0.2f);
         Camera.main.transform.rotation = Quaternion.identity;
-        yield return TweenTransform.Position(Camera.main.transform, MapManager.instance.GetCamPosition(0) + Vector3.down, 0.2f);
+        yield return TweenTrans.Position(Camera.main.transform, MapManager.instance.GetCamPosition(0) + Vector3.down, 0.2f);
 
         Vector3 currentPos = MapManager.instance.currentRoute[0] + Vector3.down;
         var n = 0;
+        bool gameOver = false;
         while(cardBox.cardCount > 0)
         {
             var c = cardBox.firstCard;
@@ -69,22 +75,19 @@ public class Ingame : MonoBehaviour {
             }
             else
             {
-                Time.timeScale = 0f;
-                TinySceneManager.instance.SetScene("GameOver");
-                //GameOver.
+                gameOver = true;
                 break;
             }   
         }
         Debug.Log("RouteEnd");
         var score = Mathf.Max(cutRemain + 3, 0);
-        if (currentPos.y != MapManager.instance.currentSize.y-1)
+        if (currentPos.y != MapManager.instance.currentSize.y-1 || gameOver)
         {
             Debug.Log("GameOver");
             TinySceneManager.instance.SetScene("GameOver");
         }
         else
         {
-
             PlayerData.instance.ClearStage(MapManager.instance.stage, Mathf.Clamp(cutRemain+3,0,3));
             PlayerData.instance.SaveData();
 
@@ -95,19 +98,37 @@ public class Ingame : MonoBehaviour {
         yield return StartCoroutine(PlayEnd(initCamPos));
     }
 
-    public IEnumerator PlayEnd(Vector3 camInitPos)
+    IEnumerator PlayEnd(Vector3 camInitPos)
     {
         Camera.main.GetComponent<CameraSizeTool>().SetCamSize(5f, 0.2f);
-        yield return TweenTransform.Position(Camera.main.transform, camInitPos, 0.2f);
+        yield return TweenTrans.Position(Camera.main.transform, camInitPos, 0.2f);
         Camera.main.GetComponent<CameraCircleMove>().enabled = true;
+        SmallSceneManager.instance.input = true;
+    }
+
+    public void ResetStage(int offset)
+    {
+        var stage = MapManager.instance.stage + offset;
+        StartCoroutine(ResetStageSeq(stage));
+    }
+    IEnumerator ResetStageSeq(int stage)
+    {
+        SmallSceneManager.instance.input = false;
+        yield return mapDestroy.PlayTimeAction();
+        
+        yield return StartCoroutine(cardBox.DeleteAllCard());
+        MapManager.instance.stage = stage;
+        GameInit();
+        
+        yield return mapCreate.PlayTimeAction();
         SmallSceneManager.instance.input = true;
     }
 
 
     IEnumerator GoRoute(int index,float time)
     {
-        StartCoroutine(TweenTransform.Position(Camera.main.transform, MapManager.instance.GetCamPosition(index), time));
-        yield return StartCoroutine(TweenTransform.Position(playerCube, MapManager.instance.GetRoutePosition(index), time));
+        StartCoroutine(TweenTrans.Position(Camera.main.transform, MapManager.instance.GetCamPosition(index), time, curve));
+        yield return StartCoroutine(TweenTrans.Position(playerCube, MapManager.instance.GetRoutePosition(index), time, curve));
     }
 
     Vector3 GetCardDir(card c)

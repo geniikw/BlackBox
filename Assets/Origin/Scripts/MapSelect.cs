@@ -50,7 +50,7 @@ public class MapSelect : MonoBehaviour {
         
         int n = 0;
         while (n++ < selectRotateStep)
-            yield return StartCoroutine(TweenTransform.Rotation(playerCube, playerCube.rotation * GetRandomEuler(), selectRotateStepTime, rotateCurve));
+            yield return StartCoroutine(TweenTrans.Rotation(playerCube, playerCube.rotation * GetRandomEuler(), selectRotateStepTime, rotateCurve));
 
         MapManager.instance.stage = stage;
         enterButtonText.text = (stage+1).ToString();
@@ -65,12 +65,13 @@ public class MapSelect : MonoBehaviour {
 
     private void OnEnable()
     {
-        ButtonInit(0);
+        enterButtonText.text = (MapManager.instance.stage + 1).ToString();
+        ButtonInit(MapManager.instance.stage);
     }
 
     private void ButtonInit(int stage)
     {
-        if (stage + 2 > GameResources.GetMapDataCount() || stage > PlayerData.instance.m_playerData.clearStage)
+        if (stage + 2 > GameResources.GetMapDataCount() || stage > PlayerData.instance.m_playerData.clearRecord.Count-1)
             next.interactable = false;
         else
             next.interactable = true;

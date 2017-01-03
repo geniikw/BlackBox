@@ -33,7 +33,7 @@ namespace GoodNightMypi.TimeAction
 
 #if UNITY_EDITOR
 
-    [CustomEditor(typeof(TimeBehaviour))]
+    [CustomEditor(typeof(TimeBehaviour),true)]
     public class TimeEditor : Editor
     {
         public override void OnInspectorGUI()
@@ -45,22 +45,6 @@ namespace GoodNightMypi.TimeAction
             }
         }
     }
-
-    [CustomEditor(typeof(MapAnimation))]
-    public class KMapEditor : TimeEditor { }
-    [CustomEditor(typeof(AnimatorWait))]
-    public class AnimatorWaitEditor : TimeEditor { }
-    [CustomEditor(typeof(TimeActionList))]
-    public class TimeActionListEditor : TimeEditor { }
-    [CustomEditor(typeof(TransformAction))]
-    public class PositionMoveEditor : TimeEditor { }
-    [CustomEditor(typeof(CreateMap))]
-    public class CreateMapAnimationEditor : TimeEditor { }
-    [CustomEditor(typeof(DestroyMap))]
-    public class DestroyMapEditor : TimeEditor { }
-    [CustomEditor(typeof(MoveToPosition))]
-    public class MoveToPositionEditor : TimeEditor { }
-
 
 #endif
 

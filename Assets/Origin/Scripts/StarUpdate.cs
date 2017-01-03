@@ -12,12 +12,12 @@ public class StarUpdate : MonoBehaviour {
 
     public Sprite star1;
     public Sprite star2;
-    
+  
     void OnEnable()
     {
         StartCoroutine(Loop());
     }
-
+    
     // Use this for initialization
     IEnumerator Loop () {
         while (true)
@@ -35,7 +35,7 @@ public class StarUpdate : MonoBehaviour {
         var c = sr.color;
         var sColor = new Color(c.r, c.b, c.g, start);
         var eColor = new Color(c.r, c.b, c.g, end);
-
+        
         float t = 0;
         while(t < 1)
         {
